@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>将多维数组转换成一维数组</title>
+</head>
+
+</head>
+
+<body>
+    请实现一个 flattenDeep 函数，将嵌套的数组扁平化
+    <script>
+        var arr = [1, '1', [null, 'null', [undefined, 'undefined', NaN, ['NaN']], {
+            'a': 2
+        }]];
+        (function () {
+            /* 方法一：使用ES6新增方法 */
+            var flattenDeep = function fn(arr) {
+                return arr.flat(Infinity);
+            }
+            console.info(flattenDeep(arr));
+        })();
+        (function () {
+            /* 
+                方法二：使用数组与字符串的转换 
+                该方法不适用于数组中的复杂类型
+            */
+            var flattenDeep = function fn(arr) {
+                return arr.toString().split(',');
+            }
+            console.info(flattenDeep(arr));
+        })();
+        (function () {
+            // console.info([...arr]);
+            // console.info([].concat(arr));
+            /*
+                方法三： 三个点(...) 加 concat()
+            */
+            var flattenDeep = function fn(arr) {
+                return [].concat(...arr.map(value => Array.isArray(value) ? fn(value) : value));
+            }
+            console.info(flattenDeep(arr));
+        })();
+        (function () {
+            /*
+                方法四： concat() 加 reduce()
+            */
+            var flattenDeep = function fn(arr) {
+                return arr.reduce((a1, a2) => Array.isArray(a2) ? a1.concat(fn(a2)) : a1.concat(a2), [])
+            }
+            console.info(flattenDeep(arr));
+        })();
+    </script>
+</body>
+
+</html>
