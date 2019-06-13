@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>获取 video 的路径</title>
+</head>
+<style>
+</style>
+</head>
+
+<body>
+    <video controls width="250" id="video">
+        <source src="./01a.mp4" type="video/mp4"> Sorry, your browser doesn't support embedded videos.
+    </video>
+    <button id="btn">点击更换</button>
+    <script>
+        (function () {
+            'use strict';
+            var sr1 = './01a.mp4';
+            var sr2 = './02b.mp4';
+            var dom = function () {
+                return document.getElementById('video');
+            }
+            // console.info(dom().children[0].src);
+            var btn = document.getElementById('btn');
+            btn.addEventListener('click', function () {
+                /*
+                    // console.info(this);
+                    // console.info(dom());
+                    dom().src = sr2;
+                    // dom().children[0].src = sr2;
+                    dom().play();
+                    console.info(dom().children[0].src);
+                */
+                document.body.removeChild(dom()); // 删除dom节点
+                // 创建节点
+                var video = document.createElement('video');
+                var source = document.createElement('source');
+                source.src = sr2;
+                source.type = "video/mp4";
+                video.src = sr2;
+                video.controls = true;
+                video.width = 225;
+                video.appendChild(source);
+                // video.innerHTML = `&lt;source src="${sr2}" type="video/mp4"&gt;`;
+                document.body.appendChild(video);
+                video.play();
+            })
+
+        })();
+    </script>
+</body>
+
+</html>

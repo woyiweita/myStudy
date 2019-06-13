@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>五种实现滚动吸顶的方式</title>
+</head>
+<style>
+    body {
+        height: 2000px;
+        margin: 0;
+        padding: 20px 0 0;
+    }
+</style>
+<script src="./js/jquery-3.3.1.min.js"></script>
+
+</head>
+
+<body>
+    <!-- function one -->
+    <style>
+        div.sticky_nav1 {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            padding: 5px;
+            background-color: #cae8ca;
+            border: 2px solid #4CAF50;
+        }
+    </style>
+    <div class="sticky_nav1">
+        粘性定位
+    </div>
+
+    <!-- function two -->
+
+    <!--<style>
+        .box {
+            height: 35px;
+        }
+
+        div.sticky_nav2 {
+            padding: 5px;
+            background-color: #cae8ca;
+            border: 2px solid #4CAF50;
+        }
+    </style>
+    <div class="box">
+        <div class="sticky_nav2">
+            粘性定位
+        </div>
+    </div>
+    <script>
+        (function (w, $, undefined) {
+            'use strict';
+            w.addEventListener('scroll', function () {
+                let self = this;
+                let scrollTop = $('html').scrollTop();
+                let offsetTop = $('.sticky_nav2').offset().top;
+                self.titleFixed = scrollTop > offsetTop;
+            })
+        })(window, jQuery);
+    </script>-->
+    <!-- function three -->
+
+    <!--<style>
+        .box1 {
+            height: 35px;
+        }
+
+        div.sticky_nav3 {
+            padding: 5px;
+            background-color: #cae8ca;
+            border: 2px solid #4CAF50;
+        }
+    </style>
+    <div class="box1">
+        <div class="sticky_nav3">
+            粘性定位
+        </div>
+    </div>
+    <script>
+        (function (w, undefined) {
+            'use strict';
+
+            let dom = document.querySelector('.sticky_nav3');
+            let obj = dom.getBoundingClientRect().top;
+            let DIv = document.createElement('div');
+            DIv.innerText = obj;
+            document.body.appendChild(DIv)
+            console.info(obj);
+        })(window);
+    </script>-->
+</body>
+
+</html>

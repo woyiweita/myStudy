@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>数组去重</title>
+</head>
+
+</head>
+
+<body>
+    <script>
+        /*方法1，使用ES6 Set() 方法*/
+        (function () {
+            'use strict';
+            console.group('fun_1');
+            var arr = [1, '1', 2, null, null, undefined, undefined, 'undefined', NaN, NaN, 'NaN', 'null', 'true',
+                true, true, false, false, 'false', ' ', ''
+            ];
+            var delRepetition = function (arr) {
+                return [...new Set(arr)];
+            }
+            console.log(delRepetition(arr));
+            console.log(typeof (delRepetition(arr)));
+            console.log(new Set(arr).toString());
+            console.log(new Set(arr).constructor === Set);
+            // console.info(arr.indexOf(NaN)); // 所以不能使用 查询的方法
+            // console.info(arr.sort());
+            console.groupEnd('fun_1');
+        })();
+        /* 方法二：通过数组查询*/
+        (function () {
+            'use strict';
+            console.group('fun_2');
+            // 该方法只能针对于不包含 NaN 的数组
+            var arr = [1, '1', 2, null, null, undefined, undefined, 'undefined', NaN, NaN, 'NaN', 'null', 'true',
+                true, true, false, false, 'false', ' ', ''
+            ];
+            var delRepetition = function (arr) {
+                return arr.filter((currentValue, index, array) => {
+                    return array.indexOf(currentValue) === index
+                })
+            }
+            console.log(delRepetition(arr));
+            console.groupEnd('fun_2');
+        })();
+    </script>
+</body>
+
+</html>

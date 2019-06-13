@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body style="height:3000px">
+    <input type="button" value="Submit" id="btn" />
+    <script>
+        var dom = document.getElementById('btn');
+        (function (w) {
+            // 'use strict'
+            /*
+                什么是节流函数：
+                节流函数的作用是规定一个单位时间，在这个单位时间内最多只能触发一次函数执行，如果这个单位时间内多次触发函数，只能有一次生效。
+            */
+            /*
+                节流应用场景
+
+                    1.按钮点击事件
+                    2.拖拽事件
+                    3.onScoll
+                    4.计算鼠标移动的距离(mousemove)
+            */
+            /*
+                方法一：
+                    使用时间戳控制
+            */
+            /*
+             * 节流函数 thottle
+             * fun [function] 需控制执行的函数
+             * delay 控制时间间隔
+             * 
+             */
+            function throttle(fun, delay) {
+                let lastTime = 0; // 函数执行开始的时间戳
+                function throttled(...args) {
+                    let context = this;
+                    // let args = arguments;
+                    var nowTime = Date.now() || new Date().getTime();
+                    if (nowTime > lastTime + delay) {
+                        fun.apply(context, args);
+                        lastTime = nowTime;
+                    }
+                }
+                return throttled;
+            }
+            let sub = throttle((a) => {
+                console.info(this);
+                console.info(a);
+            }, 2000);
+            dom.addEventListener('click', () => {
+                sub('1234');
+            }, false);
+        })(window);
+        (function () {
+            'use strict'
+            /*
+                方法二：
+                    利用定时器实现
+            */
+            function throttle(fun, delay) {
+                let timeOut = null;
+
+                function thottled(...arg) {
+                    let that = this;
+                    if (!timeOut) {
+                        timeOut = setTimeout(function () {
+                            fun.apply(that, arg);
+                            clearTimeout(timeOut);
+                            timeOut = null;
+                        }, delay);
+                    }
+                }
+                return thottled;
+            }
+
+            let sub = throttle((a) => {
+                console.info(this);
+                console.info(a);
+            }, 2000);
+            dom.addEventListener('click', () => {
+                sub('1234');
+            }, false);
+        })();
+    </script>
+</body>
+
+</html>

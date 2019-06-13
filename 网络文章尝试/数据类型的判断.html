@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>数据类型判断</title>
+</head>
+
+</head>
+
+<body>
+    <script>
+        (function () {
+            'use strict';
+
+            var typeArr = ['Array', 'Set', 'Object', 'Number', 'String', 'Null', 'Undefined', 'Boolean', 'Function',
+                'Symbol'
+            ];
+            var Type = {};
+            for (let i = 0, l = typeArr.length; i < l; i++) {
+                ((type) => {
+                    // console.info(type);
+                    Type['is' + type] = function (value) {
+                        return Object.prototype.toString.call(value) === '[object ' +
+                            type + ']'
+                    }
+                })(typeArr[i]);
+            }
+            Object.defineProperty(Type, 'typeOf', {
+                value: function (value) {
+                    // var key = Object.keys(Type);
+                    // console.info(this);
+                    var _self = this;
+                    for (let key in _self) {
+                        if (_self[key](value)) {
+                            return key.slice(2);
+                        }
+                    }
+                    return '未知';
+                }
+            });
+            // console.info(Type);
+            // 使用方法一：
+            console.info(Type.typeOf(Symbol('a')));
+
+            // 使用方法二：
+            var isType = function (value) {
+                return Type.typeOf.call(Type, value);
+            }
+            console.info(isType(Symbol('a')));
+        })();
+    </script>
+</body>
+
+</html>
