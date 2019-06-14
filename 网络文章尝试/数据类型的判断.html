@@ -14,7 +14,7 @@
             'use strict';
 
             var typeArr = ['Array', 'Set', 'Object', 'Number', 'String', 'Null', 'Undefined', 'Boolean', 'Function',
-                'Symbol'
+                'Symbol', 'Date', 'RegExp'
             ];
             var Type = {};
             for (let i = 0, l = typeArr.length; i < l; i++) {
@@ -36,7 +36,7 @@
                             return key.slice(2);
                         }
                     }
-                    return '未知';
+                    return Object.prototype.toString.call(value);
                 }
             });
             // console.info(Type);
