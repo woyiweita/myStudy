@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>深拷贝与浅拷贝</title>
+</head>
+
+</head>
+
+<body>
+    <p>在网上看到相关的题目，当时没注意看，好吧，后来面试的时候出现了，让手写一个深度拷贝。话说有点儿小凌乱，只能凭借已有的思路自己去写。</p>
+    <p>什么是深拷贝，哪些数据类型需要深拷贝？
+    </p>
+    <p>
+        在JS中，数据类型分为基础数据类型和复杂数据类型，复杂数据类型，复杂类型中变量保存的是地址，所以在复制复杂类型的时候复制的也是该地址，如果对复杂类型的数据进行改变，同时复制的数据也会发生改变，所以需要进行深拷贝。
+    </p>
+    <p>
+        深拷贝就需要递归到基础变量为止，然后进行复制。
+    </p>
+    <script>
+        // 直接返回的数据类型
+        // String、Number、Null、undefined、Date、RegExp
+        var deepClone = function fn(obj) {
+            /*
+                // 是时间类型，返回新对象
+                if (obj.constructor === Date) return new Date(obj);
+                // 正则对象，返回新对象
+                if (obj.constructor === RegExp) return new RegExp(obj);
+            */
+            // 可以这样改进,是时间类型或正则对象，返回新对象
+            if (obj.constructor === Date || obj.constructor === RegExp) return new obj.constructor(obj);
+            // 基础类型直接返回
+            if (typeof obj !== 'object' || obj === null) return obj;
+
+            // 判断是数组还是对象
+            // 不能直接复制数组或对象
+            // 需要对每一项都进行判断
+            // 避免元素或属性中包含其他复杂数据类型
+            // 创建一个新的对象
+            let o = new obj.constructor();
+            for (let key in obj) {
+                // 循环递归复杂类型的元素或对象
+                if (obj.hasOwnProperty(key)) {
+                    // 如果出现当前属性的属性值等于当前对象的情况时
+                    if (obj[key] === obj) {
+                        o[key] = o;
+                    } else {
+                        o[key] = fn(obj[key]);
+                    }
+                }
+            }
+            // 最终返回新的对象
+            return o;
+        }
+    </script>
+    <script>
+        (function (deepClone) {
+            // 测试实现效果一，循环引用
+            var obj = {
+                a: {
+                    b: 1,
+                    c: 2
+                },
+                b: {
+                    c: 1,
+                    d: 2
+                },
+                c: 3
+            }
+            obj.c = obj.b;
+            obj.b.c = obj.c;
+            console.info(obj);
+            var objT = deepClone(obj);
+            obj.a.b = 10;
+            console.info(objT);
+            console.info(obj === objT);
+        })(deepClone);
+        console.info('#####');
+        (function (deepClone) {
+            // 测试二，原型链，拷贝之后保证原型链能够正常访问
+            function Super() {
+
+            }
+            Super.prototype.location = 'NanJing';
+
+            function Child(name, age, hobbies) {
+                this.name = name;
+                this.age = age;
+                this.hobbies = hobbies;
+            }
+            Child.prototype = new Super();
+
+            let obj = new Child('Yvette', 18, ['reading', 'photography']);
+            obj.sayHi = function () {
+                console.log('hi');
+            }
+            console.log(obj.location); //NanJing
+            let newObj = deepClone(obj);
+            console.log(newObj); //
+            console.log(newObj.location); //NanJing 可以获取到原型链上的属性
+            newObj.sayHi(); //hi 函数属性拷贝正常
+        })(deepClone);
+    </script>
+</body>
+
+</html>
