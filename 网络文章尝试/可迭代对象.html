@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>可迭代对象</title>
+</head>
+
+<body>
+    <p>
+        可迭代对象可通过 `for...of `进行循环。
+    </p>
+    <h3>
+        模拟迭代器：
+    </h3>
+    <pre>
+        ```javascript
+            function makeIterator(arr) {
+                var nextIndex = 0;
+                return {
+                    next: function () {
+                        return nextIndex < arr.length ? {
+                            done: false,
+                            value: arr[nextIndex++]
+                        } : {
+                            done: true
+                        };
+                    }
+                }
+            }
+
+            var it = makeIterator(['a', 'b', 1, 6, NaN, null, undefined]);
+            var res;
+            do {
+                res = it.next();
+                console.info(res.value);
+            } while (!res.done);
+        ```
+    </pre>
+    <pre>
+    > 为了实现可迭代，一个对象必须实现 @@iterator 方法，这意味着这个对象（或其原型链中的一个对象）必须具有带 Symbol.iterator 键的属性
+</pre>
+    <p>
+        判断当前对象是否为可迭代对象，检测该对象是否具备 `Symbol.iterator` 属性。
+    </p>
+    <pre>
+        ```javascript 
+            // 以数组为例
+            Array.prototype.hasOwnProperty(Symbol.iterator); // => true
+        ```
+    </pre>
+    <p>
+        可通过检测当前对象是否具有`Symbol.iterator`属性来判断当前对象是否为可迭代对象。`Symbol.iterator` 是一个函数，所以通过`typeof`来检测返回值，如果返回值为`'function'`则为可迭代对象，如果返回值为`'undefined'`则为不可迭代对象。
+    </p>
+    <pre>
+        ```javascript
+            typeof [][Symbol.iterator]; // => 'function'
+            typeof {}[Symbol.iterator]; // => 'undefined'
+            typeof new Set()[Symbol.iterator]; // => 'function'
+            typeof new Map()[Symbol.iterator]; // => 'function'
+            typeof ''[Symbol.iterator]; // => 'function'
+            var list = document.querySelectorAll('p'); // 获取dom节点
+            typeof list[Symbol.iterator]; // => 'function'
+            typeof new Int8Array()[Symbol.iterator]  // => 'function'
+            (function(){
+                typeof arguments[Symbol.iterator]; // => 'function'
+            })();
+        ```
+    </pre>
+    <p>
+        原生具备 Iterator 接口的数据结构如下。
+    </p>
+    <ul>
+        <li>Array</li>
+        <li>Map</li>
+        <li>Set</li>
+        <li>String</li>
+        <li>TypedArray</li>
+        <li>函数的 arguments 对象</li>
+        <li>NodeList 对象</li>
+    </ul>
+    <p>
+        数组如何使用`.next()` 方法：
+    </p>
+    <pre>
+    ```javascript
+        var arr = [1,2,3];
+        var si = arr[Symbol.iterator]();
+        si.next(); //=> {value: 1, done: false}
+        si.next(); //=> {value: 2, done: false}
+        si.next(); //=> {value: 3, done: false}
+        si.next(); //=> {value: undefined, done: true}
+    ```
+</pre>
+    <p>
+        如何实现一个自定义的可迭代对象：
+    </p>
+    <pre>
+        ```javascript
+            var myIterator = {};
+            myIterator[Symbol.iterator] = function* () {
+                yield 'Bryan';
+                yield 'programmer';
+                yield 'bachelordom';
+            }
+            for (let val of myIterator) {
+                console.info(val);
+            }
+        ```
+    </pre>
+    <p>
+        总结-可迭代对象的特点： - 可使用 `for...of` 进行循环； - 对象或者原型链当中具有 `Symbol.interator` 属性； - 可通过迭代器访问并跟踪该序列中的当前位置。（迭代器提供next()方法，返回对象包含done和value方法）
+    </p>
+    <script>
+        (function () {
+            'use strict';
+
+            function makeIterator(arr) {
+                var nextIndex = 0;
+                return {
+                    next: function () {
+                        return nextIndex < arr.length ? {
+                            done: false,
+                            value: arr[nextIndex++]
+                        } : {
+                            done: true
+                        };
+                    }
+                }
+            }
+
+            var it = makeIterator(['a', 'b', 1, 6, NaN, null, undefined]);
+            var res;
+            do {
+                res = it.next();
+                console.info(res.value);
+            } while (!res.done);
+        })();
+        (function () {
+            'use strict';
+            typeof [][Symbol.iterator]; // => 'function'
+            typeof {}[Symbol.iterator]; // => 'undefined'
+            typeof new Set()[Symbol.iterator]; // => 'function'
+            typeof new Map()[Symbol.iterator]; // => 'function'
+            typeof '' [Symbol.iterator]; // => 'function'
+            var list = document.querySelectorAll('p'); // 获取dom节点
+            typeof list[Symbol.iterator]; // => 'function'
+            typeof new Int8Array()[Symbol.iterator]; // => 'function'
+            (function () {
+                typeof arguments[Symbol.iterator]; // => 'function'
+            })();
+        })();
+        (function () {
+            'use strict';
+            var myIterator = {};
+            myIterator[Symbol.iterator] = function* () {
+                yield 'Bryan';
+                yield 'programmer';
+                yield 'bachelordom';
+            }
+            for (let val of myIterator) {
+                console.info(val);
+            }
+        })();
+    </script>
+</body>
+
+</html>
