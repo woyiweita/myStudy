@@ -40,7 +40,14 @@
             // 需要对每一项都进行判断
             // 避免元素或属性中包含其他复杂数据类型
             // 创建一个新的对象
-            let o = new obj.constructor();
+            // let o = new obj.constructor();
+            // let newObj = null;
+            // if (Array.isArray(obj)) {
+            //     newObj = [];
+            // } else {
+            //     newObj = Object.create(obj.__proto__);
+            // }
+            let newObj = Array.isArray(obj) ? [] : Object.create(obj.__proto__);
             for (let key in obj) {
                 // 循环递归复杂类型的元素或对象
                 if (obj.hasOwnProperty(key)) {
