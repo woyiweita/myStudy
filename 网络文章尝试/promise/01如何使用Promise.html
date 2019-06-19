@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>如何使用Promise</title>
+</head>
+
+<body>
+    <p>
+        对于非异步的函数，需要使用 Promise 构造函数进行设置。<br> 先使用构造函数创建 Promise 实例对象
+    </p>
+
+    <script>
+        (function () {
+            'use strict';
+            /*
+                请求github帐号信息
+            */
+            // 请求地址： https://api.github.com/users/woyiweita
+            const url = 'https://api.github.com/users/woyiweita';
+
+            // 第一步创建 Promise 实例对象
+            let promise = new Promise(function (resolve, reject) {
+                // 依然需要借助于ajax请求
+                // step1 常见ajax实例化
+                let httpRequest = window.XMLHttpRequest ?
+                    new XMLHttpRequest() :
+                    new ActiveXObject("Microsoft.XMLHTTP");
+                // console.info(httpRequest);
+                if (!httpRequest) {
+                    reject('不支持！');
+                    return false;
+                }
+                const handler = function () {
+                    let self = this;
+                    if (self.readyState === XMLHttpRequest.DONE) {
+                        // console.info(self);
+                        if (self.status === 200) {
+                            resolve(self.response);
+                        } else {
+                            reject('ERROR!');
+                        }
+                    }
+                }
+
+                httpRequest.open('GET', url);
+                httpRequest.onreadystatechange = handler;
+                httpRequest.responseType = 'json';
+                httpRequest.setRequestHeader("Accept", "application/json");
+                httpRequest.send();
+
+            });
+
+            // console.info(promise);
+            promise.then(function (json) {
+                // console.info('aa');
+                console.info(json);
+            }, function (err) {
+                console.error(err);
+            });
+        })();
+
+        (function () {
+            'use strict';
+            /*
+                创建的远程仓库的信息
+            */
+            // 实现一个 promise 请求数据，返回 promise 对象
+            const getJSON = function (url) {
+                return new Promise(function (resolve, reject) {
+                    // 定义状态判断方法
+                    const handler = function () {
+                        let self = this;
+                        if (self.readyState === XMLHttpRequest.DONE) {
+                            if (self.status === 200) {
+                                resolve(self.response);
+                            } else {
+                                reject(new Error(self.statusText));
+                            }
+                        }
+                    };
+                    // 实例化 ajax 对象
+                    const xhr = window.XMLHttpRequest ?
+                        new XMLHttpRequest() :
+                        new ActiveXObject("Microsoft.XMLHTTP");
+                    // 判断实例化对象是否成功
+                    if (!xhr) {
+                        return reject(new Error('AJAX 实例化失败！'));
+                    }
+
+                    // 数据请求
+                    xhr.open('GET', url);
+                    xhr.onreadystatechange = handler;
+                    xhr.responseType = 'json';
+                    xhr.setRequestHeader("Accept", "application/json");
+                    xhr.send();
+                });
+            };
+            getJSON('https://api.github.com/users/woyiweita/repos').then(function (json) {
+                console.info(json);
+            }).catch(function (error) {
+                console.info(error);
+            });
+        })();
+    </script>
+</body>
+
+</html>

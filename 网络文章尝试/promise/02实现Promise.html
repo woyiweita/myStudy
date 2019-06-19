@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>如何使用Promise</title>
+</head>
+
+<body>
+    <p>
+
+    </p>
+
+    <script>
+        /* 
+         * 先编写 Promise 基本结构
+         *  实现使用 构造函数的方法
+         * 
+         */
+        (function () {
+            'use strict';
+            // 声明 Promise 构造函数
+            // 1. 构造函数需要传递入一个函数
+            function MyPromise(executor) {
+
+                // Promise 的三种状态
+                const PENDING = 'pending';
+                const FULFILLED = 'fulfilled';
+                const REJECTED = 'rejected';
+                this.status = PENDING;
+                this.onFulfilled = [];
+                this.onRejected = [];
+
+
+                // 成功执行的方法
+
+                function resolve(val) {
+                    if (this.status === PENDING) {
+                        this.status = FULFILLED; // 改变状态
+                        this.value = val; // 保存接收的值
+                        this.onFulfilled.forEach(fn => fn()); // 循环调用执行成功方法
+                    }
+                }
+
+                // 错误执行的方法
+                function reject(reason) {
+                    if (this.status === PENDING) {
+                        this.status = REJECTED; // 修改状态
+                        this.reason = reason; // 保存错误信息
+                        this.onRejected.forEach(fn => fn()); // 循环执行错误方法
+                    }
+                }
+
+                try {
+                    executor(resolve.call(this), reject.call(this));
+                } catch (e) {
+                    reject.call(this, e);
+                }
+            }
+
+
+
+        })();
+
+        /*
+         * 
+         * 实现使用 Class 的方法
+         * 
+         */
+        (function () {
+            'use strict';
+            class Promise {
+                constructor(executor) {
+                    // Promise 的三种状态
+                    const PENDING = 'pending';
+                    const FULFILLED = 'fulfilled';
+                    const REJECTED = 'rejected';
+
+                    let onFulfilled = [];
+                    let onRejected = [];
+
+                    // 设置初始化
+                    this.status = PENDING;
+                    this.value = null;
+                    try {
+                        executor(this.resolve.call(this), this.reject.call(this));
+                    } catch (e) {
+                        this.reject.call(this, e);
+                    }
+                }
+
+                resolve(value) {
+                    if (this.status === PENDING) {
+                        this.status = FULFILLED;
+                        this.value = value;
+                        this.onFulfilled.foreach(fn => fn());
+                    }
+                }
+                reject(reason) {
+                    if (this.status === PENDING) {
+                        this.status = REJECTED;
+                        this.reason = reason;
+                        this.onRejected.foreach(fn => fn());
+                    }
+                }
+            }
+        })();
+    </script>
+</body>
+
+</html>
