@@ -12,13 +12,13 @@
 
 <body>
     <script>
+        var arr = [1, '1', 2, null, null, undefined, undefined, 'undefined', NaN, , NaN, 'NaN', 'null', 'true',
+            true, true, false, , false, 'false', ' ', ''
+        ];
         /*方法1，使用ES6 Set() 方法*/
-        (function () {
+        (function (arr) {
             'use strict';
             console.group('fun_1');
-            var arr = [1, '1', 2, null, null, undefined, undefined, 'undefined', NaN, NaN, 'NaN', 'null', 'true',
-                true, true, false, false, 'false', ' ', ''
-            ];
             var delRepetition = function (arr) {
                 return [...new Set(arr)];
             }
@@ -29,22 +29,158 @@
             // console.info(arr.indexOf(NaN)); // 所以不能使用 查询的方法
             // console.info(arr.sort());
             console.groupEnd('fun_1');
-        })();
-        /* 方法二：通过数组查询*/
+        })(arr);
+        /*方法2，使用ES6 Set() 方法*/
         (function () {
             'use strict';
             console.group('fun_2');
-            // 该方法只能针对于不包含 NaN 的数组
-            var arr = [1, '1', 2, null, null, undefined, undefined, 'undefined', NaN, NaN, 'NaN', 'null', 'true',
-                true, true, false, false, 'false', ' ', ''
-            ];
+            var delRepetition = function (arr) {
+                return Array.from(new Set(arr));
+            }
+            console.log(delRepetition(arr));
+            console.groupEnd('fun_2');
+        })();
+        /* 方法3：通过数组查询*/
+        (function () {
+            'use strict';
+            console.group('fun_3');
             var delRepetition = function (arr) {
                 return arr.filter((currentValue, index, array) => {
                     return array.indexOf(currentValue) === index
                 })
             }
             console.log(delRepetition(arr));
-            console.groupEnd('fun_2');
+            console.groupEnd('fun_3');
+        })();
+        /* 方法4：通过数组查询*/
+        (function () {
+            'use strict';
+            console.group('fun_4');
+            var delRepetition = function (arr) {
+                let isN = false;
+                let newArr = arr.filter((currentValue, index, array) => {
+                    // if (typeof currentValue === 'number' && isNaN(currentValue) && !isN) isN = true;
+                    if (currentValue !== currentValue) isN = true;
+                    return array.indexOf(currentValue) === index
+                })
+                if (isN) {
+                    newArr.push(NaN);
+                }
+                return newArr;
+            }
+            console.log(delRepetition(arr));
+            console.groupEnd('fun_4');
+        })();
+        /*方法4，推入新的数组*/
+        (function () {
+            'use strict';
+            console.group('fun_5');
+            var delRepetition = function (arr) {
+                let newArr = [],
+                    isN = false;
+                for (let v of arr) {
+                    if (v !== v) {
+                        isN = true;
+                        continue;
+                    }
+                    if (newArr.indexOf(v) === -1) {
+                        newArr.push(v);
+                    }
+                }
+                if (isN) newArr.push(NaN);
+                return newArr;
+            }
+            console.log(delRepetition(arr));
+            console.groupEnd('fun_5');
+        })();
+        /*方法4，推入新的数组*/
+        (function () {
+            'use strict';
+            console.group('fun_5');
+            var delRepetition = function (arr) {
+                let newArr = [],
+                    isN = false;
+                for (let v of arr) {
+                    if (v !== v) {
+                        isN = true;
+                        continue;
+                    }
+                    if (!newArr.includes(v)) {
+                        newArr.push(v);
+                    }
+                }
+                if (isN) newArr.push(NaN);
+                return newArr;
+            }
+            console.log(delRepetition(arr));
+            console.groupEnd('fun_5');
+        })();
+        /*方法6，Array.prototype.reduce()*/
+        (function () {
+            'use strict';
+            console.group('fun_6');
+            var delRepetition = function (arr) {
+                let isN = false;
+                let newArr = arr.reduce((total, currentValue) => {
+                    if (currentValue !== currentValue) {
+                        isN = true;
+                    } else {
+                        // total.indexOf(currentValue) === -1 ? total.push(currentValue) : false;
+                        total.indexOf(currentValue) === -1 && total.push(currentValue);
+                    }
+                    return total;
+                }, []);
+                if (isN) newArr.push(NaN);
+                return newArr;
+            }
+            console.log(delRepetition(arr));
+            console.groupEnd('fun_6');
+        })();
+        /*方法7，排序消除*/
+        (function () {
+            'use strict';
+            console.group('fun_7');
+            var delRepetition = function (arr) {
+                let sArr = [].concat(arr).sort();
+                let newArr = [sArr[0]],
+                    isN = false,
+                    len = 1;
+                sArr.forEach((value, index) => {
+                    if (value !== value) {
+                        isN = true;
+                    } else if (value !== newArr[len - 1]) {
+                        newArr.push(value);
+                        ++len;
+                    }
+                });
+                if (isN) newArr.push(NaN);
+                return newArr;
+            }
+            console.log(delRepetition(arr));
+            console.groupEnd('fun_7');
+        })();
+        /*方法7，排序消除*/
+        (function () {
+            'use strict';
+            console.group('fun_7');
+            var delRepetition = function (arr) {
+                let sArr = [].concat(arr).sort();
+                let newArr = [],
+                    isN = false;
+                sArr.forEach((value, index, cArr) => {
+                    if (value !== value) {
+                        isN = true;
+                    } else if (index === 0 || value !== cArr[index - 1]) {
+                        // 如果是第一项，则直接插入
+                        // 后一项不等于前一项，则插入后一项内容
+                        newArr.push(value);
+                    }
+                });
+                if (isN) newArr.push(NaN);
+                return newArr;
+            }
+            console.log(delRepetition(arr));
+            console.groupEnd('fun_7');
         })();
     </script>
 </body>
