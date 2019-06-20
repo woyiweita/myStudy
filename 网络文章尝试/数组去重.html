@@ -182,6 +182,31 @@
             console.log(delRepetition(arr));
             console.groupEnd('fun_7');
         })();
+        /*方法7，对象属性*/
+        (function () {
+            'use strict';
+            console.group('fun_8');
+            var delRepetition = function (arr) {
+                let obj = {};
+                let newArr = [],
+                    isN = false;
+                arr.forEach((value, index, cArr) => {
+                    if (value !== value) {
+                        isN = true;
+                    } else if (!obj[value]) {
+                        obj[value] = true;
+                    }
+                });
+                newArr = Object.keys(obj);
+                if (isN) newArr.push(NaN);
+                return newArr;
+            }
+            console.log(delRepetition(arr)); // => ["1", "2", "null", "undefined", "NaN", "true", "false", " ", "", NaN]
+            /*
+             * 在这里需要注意的是，作为对象的键值是有类型要求的，在这里字符串能够很好的保留，其他类型将会略过
+             */
+            console.groupEnd('fun_8');
+        })();
     </script>
 </body>
 
