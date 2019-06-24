@@ -1,9 +1,8 @@
-/*
-    JavaScript 设计模式
-    3.2.4 高阶函数的应用   => 86页
-    uncurrying
-
-*/
+/**
+ * JavaScript 设计模式
+ * 3.2.4 高阶函数的应用   => 86页
+ * uncurrying
+ */
 
 Function.prototype.uncurrying = function () {
     // 保存原函数的引用；
