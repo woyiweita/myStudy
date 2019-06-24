@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>函数柯理化</title>
+</head>
+
+</head>
+
+<body>
+    <script>
+        (function () {
+            'use strict';
+            var add = function (a, b, c) {
+                return a + b + c;
+            }
+
+            var currying = function (fn) {
+                // 在这里可以先验证一下，如果传入的参数不是函数，就直接返回，无需处理
+                if (typeof fn !== 'function') return fn;
+
+                return function func(...args) {
+                    // 如果接收的参数个数不满足原函数参数个数的要求，继续返回函数用于接收参数
+                    if (args.length < fn.length) {
+                        return function (...argss) {
+                            // 递归调用，重复判断
+                            return func.call(null, ...args, ...argss);
+                        }
+                    } else {
+                        // 满足条件则计算
+                        return fn.apply(null, args)
+                    }
+                }
+            }
+            // debugger;
+            add = currying(add);
+            console.info(add(1)(2)(3));
+            console.info(add(1, 2, 3));
+            console.info(add(1, 2)(3));
+            console.info(add(1)(2, 3));
+        })();
+        (function () {
+            'use strict';
+            var add = function (a, b, c) {
+                return a + b + c;
+            }
+
+            var currying = function (fn) {
+                // 在这里可以先验证一下，如果传入的参数不是函数，就直接返回，无需处理
+                if (typeof fn !== 'function') return fn;
+
+                return function func(...args) {
+                    // 如果接收的参数个数不满足原函数参数个数的要求，继续返回函数用于接收参数
+                    if (args.length < fn.length) {
+                        return (...argss) => {
+                            // 递归调用，重复判断
+                            return func.call(null, ...args, ...argss);
+                        }
+                    } else {
+                        // 满足条件则计算
+                        return fn.apply(null, args)
+                    }
+                }
+            }
+
+            add = currying(add);
+            console.info(add(1, 2, 3)); // => 6
+            console.info(add(1, 2)(3)); // => 6
+            console.info(add(1)(2, 3)); // => 6
+            console.info(add(1)(2)(3)); // => 6
+        })();
+    </script>
+</body>
+
+</html>
