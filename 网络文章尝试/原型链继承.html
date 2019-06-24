@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>函数柯理化</title>
+</head>
+
+</head>
+
+<body>
+    <script>
+        (function () {
+            'use strict';
+            // 构造函数
+            function Animal(name, six) {
+                this.name = name;
+                this.six = six;
+            }
+            Animal.prototype.cry = function () {
+                return '嘤嘤嘤';
+            }
+
+            function Dog(name, age) {
+                this.name = name;
+                this.age = age;
+            }
+
+            Dog.prototype = new Animal('怪兽', '未知');
+            Dog.prototype.run = function () {
+                return '鸭子类型';
+            }
+
+            // 完成实例化，检测继承
+            var erHa = new Dog('哈士奇', 5);
+            console.info(erHa.name); // => 哈士奇
+            console.info(erHa.six); // => 未知
+            console.info(erHa.age); // => 5
+            console.info(erHa.cry()); // => 嘤嘤嘤
+            console.info(erHa.run()); // => 鸭子类型
+        })();
+    </script>
+</body>
+
+</html>
