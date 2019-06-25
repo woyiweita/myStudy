@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>JS函数无限累加</title>
+</head>
+
+</head>
+
+<body>
+    <script>
+        (function () {
+            'use strict';
+
+            // 第一步，先实现加和运算
+
+            var add = function (a, b) {
+                return a + b;
+            }
+
+            add(1, 2); // => 3
+            // 第二步，实现柯理化
+            // 通过柯理化可以讲每个参数单独处理
+
+            var currying = function (fn) {
+                // 这里是讲原来的函数进行柯理化处理
+                // 参数可以接收一个或多个，如果是多个直接进行运算
+                // 如果是参数不满足运算结果则直接返回函数，接收参数
+                var sum = 0;
+                return function func(...args) {
+                    if (args.length === 0) {
+                        return sum;
+                    } else if (args.length === 1) {
+                        sum = fn(sum, args[0]);
+                    } else {
+                        sum = args.reduce(fn, sum);
+                    }
+                    return func;
+                }
+            }
+
+            add = currying(add);
+            console.info(add(1));
+        })();
+        (function () {
+            'use strict';
+
+            // 第一步，先实现加和运算
+
+            var add = function (a, b) {
+                return a + b;
+            }
+
+            add(1, 2); // => 3
+            // 第二步，实现柯理化
+            // 通过柯理化可以将每个参数单独处理
+
+            var currying = function (fn) {
+                var sum = 0;
+                return function func(...args) {
+                    // 如果传入一个参数，则返回函数继续计算
+                    // 如果满足条件，则进行计算
+                    if (args.length < fn.length) {
+                        return function (...argts) {
+                            return func.call(null, ...args, ...argts);
+                        };
+                    } else {
+                        return fn.apply(null, args);
+                    }
+                }
+            }
+
+            add = currying(add);
+            console.info(add(1, 2));
+        })();
+        (function () {
+            'use strict';
+
+            // 第一步，先实现加和运算
+
+            var add = function (a, b) {
+                return a + b;
+            }
+
+            add(1, 2); // => 3
+            // 第二步，实现柯理化
+            // 通过柯理化可以将每个参数单独处理
+
+            // 第三步，实现无限累加，即实现的是无限函数调用
+            // 那么返回的结果就不能是一个值，而应该是一个函数
+            // 这个函数就是需要进行运算的柯理化后的函数
+
+            var currying = function (fn) {
+                var sum = 0;
+                return function func(...args) {
+                    // 在这里也没有必要判断传递参数的个数了
+                    // 因为不管传递多少个参数进来，最终都是要返回一个函数进行下一轮的计算
+                    /*
+                    if (args.length < fn.length) {
+                        return function (...argts) {
+                            return func.call(null, ...args, ...argts);
+                        };
+                    } else {
+                        return fn.apply(null, args);
+                    }
+                    */
+                    // 如果没有传递参数则返回计算结果，表示运算终结
+
+                    // 所以如果传递参数，就加上原有的计算结果
+                    if (args.length === 0) {
+                        return sum;
+                    } else {
+                        args.unshift(sum);
+                        sum = args.reduce(fn);
+                        return func;
+                    }
+                }
+            }
+
+            add = currying(add);
+            console.info(add(1, 2)());
+        })();
+        (function () {
+            'use strict';
+
+            // 第一步，先实现加和运算
+
+            var add = function (a, b) {
+                return a + b;
+            }
+
+            add(1, 2); // => 3
+            // 第二步，实现柯理化
+            // 通过柯理化可以将每个参数单独处理
+
+            // 第三步，实现无限累加，即实现的是无限函数调用
+            // 那么返回的结果就不能是一个值，而应该是一个函数
+            // 这个函数就是需要进行运算的柯理化后的函数
+
+            var currying = function (fn, sum = 0) {
+                let defined = sum;
+                return function func(...args) {
+                    if (args.length === 0) {
+                        [defined, sum] = [sum, null];
+                        return defined;
+                    } else {
+                        args.unshift(sum);
+                        sum = args.reduce(fn);
+                        return func;
+                    }
+                }
+            }
+
+            add = currying(add);
+            console.info(add(1, 2)());
+        })();
+
+        (function () {
+            'use strict';
+
+            // 第一步，先实现加和运算
+
+            var add = function (a, b) {
+                return a + b;
+            }
+
+            add(1, 2); // => 3
+            // 第二步，实现柯理化
+            // 通过柯理化可以将每个参数单独处理
+
+            // 第三步，实现无限累加，即实现的是无限函数调用
+            // 那么返回的结果就不能是一个值，而应该是一个函数
+            // 这个函数就是需要进行运算的柯理化后的函数
+
+            // 不管是否调用函数，都需要将函数作为返回
+            // 在打印函数的时候会自动调用 toString 方法
+            // 改写 toString 方法，使其在非调用的时候调用，返回最计算结果
+
+            var currying = function (fn, sum = 0) {
+                let defined = sum,
+                    isT = true;
+
+                function func(...args) {
+                    isT = true;
+                    if (args.length === 0) {
+                        // [defined, sum] = [sum, defined];
+                        return func.toString();
+                    } else {
+                        args.unshift(sum);
+                        sum = args.reduce(fn);
+                        return func;
+                    }
+                }
+                func.toString = () => {
+                    isT && ([defined, sum, isT] = [sum, defined, false]);
+                    return defined;
+                }
+                return func;
+            }
+
+            add = currying(add);
+            var a = add(1, 2)(3);
+        })();
+        (function () {
+            'use strict';
+
+            // 第一步，先实现加和运算
+
+            var add = function (a, b) {
+                return a + b;
+            }
+
+            add(1, 2); // => 3
+            // 第二步，实现柯理化
+            // 通过柯理化可以将每个参数单独处理
+
+            // 第三步，实现无限累加，即实现的是无限函数调用
+            // 那么返回的结果就不能是一个值，而应该是一个函数
+            // 这个函数就是需要进行运算的柯理化后的函数
+
+            // 不管是否调用函数，都需要将函数作为返回
+            // 在打印函数的时候会自动调用 toString 方法
+            // 改写 toString 方法，使其在非调用的时候调用，返回最计算结果
+
+            var currying = function (fn, sum = 0) {
+                function func(...args) {
+                    if (args.length === 0) {
+                        return func.toString();
+                    } else {
+                        args.unshift(sum);
+                        sum = args.reduce(fn);
+                        return func;
+                    }
+                }
+                func.toString = () => {
+                    return sum;
+                }
+                return func;
+            }
+
+            var bdd = currying(add);
+            var a = bdd(1, 2)(3);
+            console.info(a); // => 6
+            // debugger;
+            var cdd = currying(add);
+            console.info(cdd(1, 2, 3)); // => 6
+        })();
+        (function () {
+            'use strict';
+
+            // 第一步，先实现加和运算
+
+            var add = function (a, b) {
+                return a + b;
+            }
+
+            var currying = function (fn) {
+                // let isT = false;
+                return function (...args) { // 第一次调用的是这个函数
+                    // 如果长度为空则返回计算结果
+                    // 每次执行前先进行和的初始化
+                    // var sum = func(...args);
+                    var sum = 0;
+                    // 第二次之后调用的是这个函数
+                    function func(...argts) {
+                        if (args.length === 0) {
+                            return func.toString();
+                        } else {
+                            argts.unshift(sum);
+                            sum = argts.reduce(fn);
+                            return func;
+                        }
+                    }
+                    func.toString = () => sum;
+                    return func(...args);
+                }
+            }
+
+            console.info('#####');
+            var add = currying(add);
+            // debugger;
+            console.info(add(1, 2)); // => 3
+            // debugger;
+            console.info(add(1, 2)(3)); // => 6
+        })();
+        (function () {
+            'use strict';
+
+            /*####最终成功案例####*/
+
+            // 第一步，先实现加和运算
+
+            var add = function (a, b) {
+                return a + b;
+            }
+
+            var currying = function (fn, defineVal = 0) {
+                return function (...args) { // 第一次调用的是这个函数
+                    // 每次执行前先进行和的初始化
+                    var sum = defineVal;
+
+                    function func(...argts) { // 第二次之后调用的是这个函数
+                        if (args.length === 0) {
+                            return func.toString();
+                        } else {
+                            argts.unshift(sum);
+                            sum = argts.reduce(fn);
+                            return func;
+                        }
+                    }
+                    func.toString = () => sum;
+                    return func(...args);
+                }
+            }
+
+            console.info('#####');
+            var add = currying(add);
+            // debugger;
+            console.info(add(1)); // => 1
+            console.info(add(1)(2)); // => 3
+            console.info(add(1)(2)(3)); // => 6
+            // debugger;
+            console.info(add(1, 2)(3)); // => 6
+            console.info(add(1)(2, 3)); // => 6
+            console.info(add(1, 2, 3)); // => 6
+            console.info(add(1, 2, 3)(4)); // => 10
+        })();
+    </script>
+</body>
+
+</html>
