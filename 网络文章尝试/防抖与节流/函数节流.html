@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>函数节流</title>
+</head>
+
+<body style="height:3000px">
+    <input id="btn" type="button" value="submit" />
+    <script>
+        (function () {
+            'use strict';
+
+            /*为避免相互影响，将各组代码注释，测试时将各组展开即可*/
+
+            /*常规写法*/
+            // window.onscroll = function () {
+            //     console.info('window.scrollY:' + window.scrollY);
+            // }
+
+
+            /*节流函数写法*/
+            // window.onscroll = (function () {
+            //     var t = null,
+            //         _self = window;
+            //     return function () {
+            //         if (!t) { // 如果在运行期间，则跳过
+            //             t = setTimeout(function () {
+            //                 clearTimeout(t);
+            //                 t = null;
+            //                 console.info('window.scrollY:' + _self.scrollY);
+            //             }, 500);
+            //         }
+            //     }
+            // })();
+
+
+            /*提取公共部分，封装节流函数*/
+            var throttle = function (fn, interval = 500) {
+                var t = null,
+                    _self = this;
+                return function (...args) {
+                    if (!t) {
+                        t = setTimeout(function () {
+                            clearTimeout(t);
+                            t = null;
+                            fn.apply(_self, args);
+                        }, interval);
+                    }
+                }
+            }
+            // 解封即用
+            // window.onscroll = throttle(() => {
+            //     console.info('window.scrollY:' + window.scrollY);
+            // });
+        })();
+        (function () {
+            'use strict';
+
+            function timeChunk(fn, count = 10, interval = 100) {
+                var time = null,
+                    _self = this;
+                return function func(ary) {
+                    var newData = [].concat(ary), // 复制原数组，避免对原始数据操作。
+                        computData = null,
+                        l = newData.length;
+                    if (!l) {
+                        return clearTimeout(time);
+                    }
+                    // 数据切割
+                    computData = newData.splice(0, Math.min(count, l));
+
+                    fn.call(_self, computData);
+
+                    setTimeout(function () {
+                        func(newData);
+                    }, interval);
+                }
+            }
+            var insetList = function (listData) {
+                for (var i = 0, l = listData.length; i < l; i++) {
+                    var div = document.createElement('div');
+                    div.innerHTML = listData[i]['text'];
+                    document.body.appendChild(div);
+                }
+            }
+            // 数据模拟
+            var listData = [];
+            for (var i = 0; i < 500; i++) {
+                listData[i] = {
+                    text: i
+                };
+            }
+
+            insetList = timeChunk(insetList);
+            // 解封即用
+            // insetList(listData);
+
+        })();
+        (function () {
+            'use strict';
+
+            function timeChunk(fn, count = 10, interval = 100) {
+                var time = null,
+                    _self = this;
+
+                return function (ary) {
+                    var newData = [].concat(ary),
+                        computData = null;
+
+                    (function func() {
+                        let l = newData.length;
+                        if (!l) {
+                            newData = null; // 这里不知道是否有必要手动释放内存
+                            return clearTimeout(time);
+                        }
+                        // 数据切割
+                        computData = newData.splice(0, Math.min(count, l));
+                        // 这里调用原始数据，将切割完成的数据传入
+                        fn.call(_self, computData);
+                        setTimeout(function () {
+                            func();
+                        }, interval);
+                    })();
+                }
+            }
+            var insetList = function (listData) {
+                for (var i = 0, l = listData.length; i < l; i++) {
+                    var div = document.createElement('div');
+                    div.innerHTML = listData[i]['text'];
+                    document.body.appendChild(div);
+                }
+            }
+            // 数据模拟
+            var listData = [];
+            for (var i = 0; i < 500; i++) {
+                listData[i] = {
+                    text: i
+                };
+            }
+
+            // 对原函数进行封装
+            insetList = timeChunk(insetList);
+            // 将数据加载到页面当中
+            // 解封即用
+            // insetList(listData);
+
+        })();
+        (function () {
+            'use strict';
+            // 懒加载
+            var btn = document.getElementById('btn');
+            var addEvent = function (elem, type, handler) {
+                // 当第一次调用时在这里改写
+                if (window.addEventListener) {
+                    addEvent = function (elem, type, handler) {
+                        elem.addEventListener(type, handler, false);
+                    }
+                } else if (window.attachEvent) {
+                    addEvent = function (elem, type, handler) {
+                        elem.attachEvent('on' + type, handler);
+                    }
+                }
+                // 可以从控制台中看到，调用两次，只有一次打印
+                console.info(addEvent);
+                // 这个时候，原来的 addEvent 函数已经被改写了
+                // 改写成功后在这里调用
+                // 如果这里不调用的话第一次执行只是对函数进行了该写
+                // 不会委派事件
+                addEvent(elem, type, handler);
+            }
+
+            // 第一次调用
+            addEvent(btn, 'click', function (em) {
+                console.info(em);
+            });
+            // 第二次调用
+            addEvent(btn, 'click', function (em) {
+                console.info('em');
+            });
+        })();
+    </script>
+</body>
+
+</html>
