@@ -39,6 +39,39 @@
             console.info(erHa.cry()); // => 嘤嘤嘤
             console.info(erHa.run()); // => 鸭子类型
         })();
+        (function () {
+            function Animal(name, six) {
+                this.name = name;
+                this.six = six;
+                this.type = ['哈士奇', '美杜莎', '布鲁多']
+            }
+
+            function Dog(name, age) {
+                this.name = name;
+                this.age = age;
+            }
+            Dog.prototype = new Animal('狗', 'body');
+            var mao = new Dog('金毛', 8);
+            mao.type.push('金毛');
+            var erHa = new Dog('哈士奇', 5);
+            console.info(erHa.type);
+        })();
+        (function () {
+            function Animal(name, six) {
+                this.name = name;
+                this.six = six;
+            }
+
+            function Dog(name, age) {
+                this.name = name;
+                this.age = age;
+            }
+            Dog.prototype = new Animal('狗', 'body');
+            var erHa = new Dog('哈士奇', 5);
+            erHa.six = 'girl';
+            var mao = new Dog('金毛', 8);
+            console.info(mao.six);
+        })();
     </script>
 </body>
 
